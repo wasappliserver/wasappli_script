@@ -8,7 +8,11 @@ require 'maruku'
 #
 #TestFlight Upload
 #
+<<<<<<< HEAD
 def distributeToTestFlight(api_token, team_token, distribution_list)
+=======
+def distributeToTestFlight(api_token, team_token, release_note, distribution_list)
+>>>>>>> 490c4f5d2f20846c15388cf3fe8f3c1bbce48afb
 
   url = 'http://testflightapp.com/api/builds.json'
   dir_ipa = Dir["/Users/wasappliserver/.jenkins/jobs/#{@project_dir}/builds/*.ipa"]
@@ -21,7 +25,11 @@ def distributeToTestFlight(api_token, team_token, distribution_list)
                       :dsym => File.new(dir_dsym[0], 'rb'),
                       :api_token => api_token,
                       :team_token => team_token,
+<<<<<<< HEAD
                       :notes => @release_note,
+=======
+                      :notes => release_note,
+>>>>>>> 490c4f5d2f20846c15388cf3fe8f3c1bbce48afb
                       :notify => 'false',
                       :distribution_lists => distribution_list
                   }
@@ -69,6 +77,7 @@ def executePushes build_status, error_msg
   elsif build_status == "failed"
     title = "Build failed"
     long_message = "#{error_msg}"
+<<<<<<< HEAD
   end
 
 ### BoxCar ###
@@ -80,6 +89,19 @@ def executePushes build_status, error_msg
     sendPushCar user_credentials, title, long_message
   end
 
+=======
+  end
+
+### BoxCar ###
+  dev_box_car = user_box_car["Devs"]
+#clients_box_car = user_box_car["Clients"]
+#Devs
+  for i in 0..dev_box_car.length-1
+    user_credentials = dev_box_car[i]
+    sendPushCar user_credentials, title, long_message
+  end
+
+>>>>>>> 490c4f5d2f20846c15388cf3fe8f3c1bbce48afb
 #Clients
 #for i in 0..clients_box_car.length-1
 #  user_credentials = clients_box_car[i]
@@ -110,9 +132,14 @@ end
 #
 def sendPushCar (user_credentials, title, long_message)
   url= 'https://new.boxcar.io/api/notifications'
+<<<<<<< HEAD
 
   doc = Maruku.new(long_message)
 
+=======
+  doc = Maruku.new(long_message)
+  puts doc.to_html
+>>>>>>> 490c4f5d2f20846c15388cf3fe8f3c1bbce48afb
   RestClient.post url,
                   {
                       :user_credentials => user_credentials,
