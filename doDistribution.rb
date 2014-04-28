@@ -8,7 +8,7 @@ error_msg = ""
 hash_content= File.read("/Users/wasappliserver/Documents/Hash/hash")
 # # # # #
 
-#reqd the file and get the json
+#read the file and get the json
 readFileJson
 arr_json = JSON.parse(@filejson.to_s)
 
@@ -39,12 +39,11 @@ readFileMd
 if @fileMd.to_s == ""
   warn "Release file missing"
   error_msg = "No Release file found, or release file is empty"
-  #executePushes "failed", error_msg
+  executePushes "failed", error_msg
   exit
 else
   @release_note = @fileMd.to_s
 end
-
 
 if arr_distri["distribution_name"] == 'TestFlight'
 # # # # # # FOR TESTFLIGHT # # # # # # #
@@ -81,15 +80,14 @@ if arr_distri["distribution_name"] == 'TestFlight'
   end
   write_in_hash arr_json
 
-  executePushes "success", ""
 #call the distribution method
-#distributeToTestFlight(api_token, team_token, release_note, distribution_list)
+distributeToTestFlight(api_token, team_token, distribution_list)
 # # # # # # # # # # # # # # # # # # # # #
 
 elsif arr_distri["distribution_name"] == 'HockeyApp'
 
 # # # # # # # FOR HOCKEY APP # # # # # # # #
-  if arr_json.has_key?("hockeyapp_token")
+  if arr_info.has_key?("hockeyapp_token")
     hockeyapp_token = arr_info["hockeyapp_token"]
   else
     error_msg = "hockeyapp_token is missing"
@@ -108,10 +106,6 @@ elsif arr_distri["distribution_name"] == 'HockeyApp'
     exit
   end
 
-  #RELEASE NOTE
-  #!work in progress!#
-  release_note = arr_json["distribution_list"]
-
   #Distribution
   distributeToHockeyApp(hockeyapp_token, app_id, release_note)
 
@@ -120,4 +114,3 @@ else
   write_in_hash arr_json
   exit
 end
-

@@ -8,7 +8,7 @@ require 'maruku'
 #
 #TestFlight Upload
 #
-def distributeToTestFlight(api_token, team_token, release_note, distribution_list)
+def distributeToTestFlight(api_token, team_token, distribution_list)
 
   url = 'http://testflightapp.com/api/builds.json'
   dir_ipa = Dir["/Users/wasappliserver/.jenkins/jobs/#{@project_dir}/builds/*.ipa"]
@@ -21,7 +21,7 @@ def distributeToTestFlight(api_token, team_token, release_note, distribution_lis
                       :dsym => File.new(dir_dsym[0], 'rb'),
                       :api_token => api_token,
                       :team_token => team_token,
-                      :notes => release_note,
+                      :notes => @release_note,
                       :notify => 'false',
                       :distribution_lists => distribution_list
                   }
@@ -110,8 +110,9 @@ end
 #
 def sendPushCar (user_credentials, title, long_message)
   url= 'https://new.boxcar.io/api/notifications'
+
   doc = Maruku.new(long_message)
-  puts doc.to_html
+
   RestClient.post url,
                   {
                       :user_credentials => user_credentials,
