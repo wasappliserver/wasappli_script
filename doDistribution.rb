@@ -8,11 +8,7 @@ error_msg = ""
 hash_content= File.read("/Users/wasappliserver/Documents/Hash/hash")
 # # # # #
 
-<<<<<<< HEAD
-#read the file and get the json
-=======
 #reqd the file and get the json
->>>>>>> 490c4f5d2f20846c15388cf3fe8f3c1bbce48afb
 readFileJson
 arr_json = JSON.parse(@filejson.to_s)
 
@@ -37,21 +33,6 @@ end
 arr_distri = arr_json["distribution"]
 arr_info = arr_distri["distribution_info"]
 arr_notif = arr_json["notification"]
-<<<<<<< HEAD
-=======
-
-#RELEASE NOTE
-readFileMd
-if @fileMd.to_s == ""
-  warn "Release file missing"
-  error_msg = "No Release file found, or release file is empty"
-  #executePushes "failed", error_msg
-  exit
-else
-  @release_note = @fileMd.to_s
-end
-
->>>>>>> 490c4f5d2f20846c15388cf3fe8f3c1bbce48afb
 
 #RELEASE NOTE
 readFileMd
@@ -87,20 +68,6 @@ if arr_distri["distribution_name"] == 'TestFlight'
     executePushes "failed", error_msg
     exit
   end
-<<<<<<< HEAD
-
-  if arr_info.has_key?("distribution_list")
-    distribution_list = arr_info["distribution_list"]
-  else
-    error_msg = "distribution_list is missing"
-    puts error_msg
-    write_in_hash arr_json
-    executePushes "failed", error_msg
-    exit
-  end
-  write_in_hash arr_json
-=======
->>>>>>> 490c4f5d2f20846c15388cf3fe8f3c1bbce48afb
 
   if arr_info.has_key?("distribution_list")
     distribution_list = arr_info["distribution_list"]
@@ -115,33 +82,7 @@ if arr_distri["distribution_name"] == 'TestFlight'
 
   executePushes "success", ""
 #call the distribution method
-<<<<<<< HEAD
 distributeToTestFlight(api_token, team_token, distribution_list)
-# # # # # # # # # # # # # # # # # # # # #
-
-elsif arr_distri["distribution_name"] == 'HockeyApp'
-
-# # # # # # # FOR HOCKEY APP # # # # # # # #
-  if arr_info.has_key?("hockeyapp_token")
-    hockeyapp_token = arr_info["hockeyapp_token"]
-  else
-    error_msg = "hockeyapp_token is missing"
-    puts error_msg
-    write_in_hash arr_json
-    executePushes "failed", error_msg
-    exit
-  end
-  if arr_info.has_key?("app_id")
-    app_id = arr_info["app_id"]
-  else
-    error_msg = "app_id is missing"
-    puts error_msg
-    write_in_hash arr_json
-    executePushes "failed", error_msg
-    exit
-  end
-=======
-#distributeToTestFlight(api_token, team_token, release_note, distribution_list)
 # # # # # # # # # # # # # # # # # # # # #
 
 elsif arr_distri["distribution_name"] == 'HockeyApp'
@@ -169,7 +110,6 @@ elsif arr_distri["distribution_name"] == 'HockeyApp'
   #RELEASE NOTE
   #!work in progress!#
   release_note = arr_json["distribution_list"]
->>>>>>> 490c4f5d2f20846c15388cf3fe8f3c1bbce48afb
 
   #Distribution
   distributeToHockeyApp(hockeyapp_token, app_id, release_note)
