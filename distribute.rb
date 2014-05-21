@@ -1,7 +1,6 @@
-require 'rest_client'
+﻿require 'rest_client'
 require 'hockeyapp'
 require 'unirest'
-require 'maruku'
 
 @filejson = nil
 @fileMd = nil
@@ -70,17 +69,20 @@ def executePushes build_status, error_msg
   elsif build_status == "failed"
     title = "Build failed"
     long_message = "#{error_msg}"
+  elsif build_status == "skipped"
+    title = "Build success, distrib skipped"
+    long_message = "#{error_msg}"
   end
 
 ### BoxCar ###
   dev_box_car = user_box_car["Devs"]
 #clients_box_car = user_box_car["Clients"]
 #Devs
-  for i in 0..dev_box_car.length-1
+  for i in 0..dev_box_car.size-1
     user_credentials = dev_box_car[i]
+    puts user_credentials
     sendPushCar user_credentials, title, long_message
   end
-
 #Clients
 #for i in 0..clients_box_car.length-1
 #  user_credentials = clients_box_car[i]
@@ -100,8 +102,9 @@ def executePushes build_status, error_msg
   api_key = user_push_co["api_key"]
   api_secret = user_push_co["api_secret"]
   message = @release_note
-  sendPushCo api_key, api_secret, message
-  #end
+  if (!api_key.equal?("") || !api_secret.equal?(""))
+    sendPushCo api_key, api_secret, message
+  end
   ### end Push.co ###
 
 end
@@ -111,14 +114,19 @@ end
 #
 def sendPushCar (user_credentials, title, long_message)
   url= 'https://new.boxcar.io/api/notifications'
-  doc = Maruku.new(long_message)
+
+  #MARDOWN COVERT
+  # filename to be converted to HTML
+  filename = "/Users/wasappliserver/.jenkins/jobs/#{@project_dir}/workspace/Release/#{@project_dir}.md"
+  # Read file contents
+  @contents = File.read(filename)
 
   RestClient.post url,
                   {
                       :user_credentials => user_credentials,
                       :notification => {
                           :title => title,
-                          :long_message => doc.to_html,
+                          :long_message => @contents,
                           :sound => "success",
                       }
                   }
@@ -145,8 +153,7 @@ def readFileJson
 end
 
 #reading the release Markdown file
-#Open the .json file
 def readFileMd
   @fileMd = File.read("/Users/wasappliserver/.jenkins/jobs/#{ARGV[0]}/workspace/Release/#{ARGV[0]}.md")
-  puts @fileMd
+  #puts @fileMd
 end

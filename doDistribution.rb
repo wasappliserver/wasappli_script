@@ -1,14 +1,19 @@
+﻿#encoding utf-8
 require_relative 'distribute.rb'
 require 'json'
-
+ 
 #error msg variable
 error_msg = ""
 
 #BEFORE DOING ANYTHING, COMPARING HASH OF FILES
-hash_content= File.read("/Users/wasappliserver/Documents/Hash/hash")
+if !File.exists?("/Users/wasappliserver/Documents/Hash/hash#{ARGV[0]}")
+  File.new("/Users/wasappliserver/Documents/Hash/hash#{ARGV[0]}", "w+")
+else
+  hash_content= File.read("/Users/wasappliserver/Documents/Hash/hash#{ARGV[0]}")
+end
 # # # # #
 
-#reqd the file and get the json
+#read the file and get the json
 readFileJson
 arr_json = JSON.parse(@filejson.to_s)
 
@@ -16,17 +21,20 @@ arr_json = JSON.parse(@filejson.to_s)
 @project_dir = ARGV[0]
 
 #Verification
-if arr_json.to_s == hash_content.to_s
-  warn "Distribution aborted JSON has no changes"
-  error_msg = "Distribution aborted JSON has no changes"
-  executePushes "failed", error_msg
+readFileMd
+#puts @fileMd
+puts hash_content
+if @fileMd.to_s == hash_content.to_s
+  warn "Distribution aborted MD has no changes"
+  error_msg = "Distribution aborted MD has no changes"
+  executePushes "skipped", error_msg
   exit
 end
 
 #WRITE Hash In a file for future comparison
-def write_in_hash arr_json
+def write_in_hash
   File.new("/Users/wasappliserver/Documents/Hash/hash#{ARGV[0]}", "w+")
-  File.write("/Users/wasappliserver/Documents/Hash/hash", arr_json)
+  File.write("/Users/wasappliserver/Documents/Hash/hash#{ARGV[0]}", @fileMd)
 end
 
 #Verif is ok; getting content from JSON
@@ -54,7 +62,7 @@ if arr_distri["distribution_name"] == 'TestFlight'
   else
     error_msg = "api token is missing"
     puts error_msg
-    write_in_hash arr_json
+    write_in_hash
     executePushes "failed", error_msg
     exit
   end
@@ -64,7 +72,7 @@ if arr_distri["distribution_name"] == 'TestFlight'
   else
     error_msg = "team_token is missing"
     puts error_msg
-    write_in_hash arr_json
+    write_in_hash
     executePushes "failed", error_msg
     exit
   end
@@ -74,15 +82,14 @@ if arr_distri["distribution_name"] == 'TestFlight'
   else
     error_msg = "distribution_list is missing"
     puts error_msg
-    write_in_hash arr_json
+    write_in_hash
     executePushes "failed", error_msg
     exit
   end
-  write_in_hash arr_json
+  write_in_hash
 
-  executePushes "success", ""
 #call the distribution method
-distributeToTestFlight(api_token, team_token, distribution_list)
+  distributeToTestFlight(api_token, team_token, distribution_list)
 # # # # # # # # # # # # # # # # # # # # #
 
 elsif arr_distri["distribution_name"] == 'HockeyApp'
@@ -93,7 +100,7 @@ elsif arr_distri["distribution_name"] == 'HockeyApp'
   else
     error_msg = "hockeyapp_token is missing"
     puts error_msg
-    write_in_hash arr_json
+    write_in_hash
     executePushes "failed", error_msg
     exit
   end
@@ -102,7 +109,7 @@ elsif arr_distri["distribution_name"] == 'HockeyApp'
   else
     error_msg = "app_id is missing"
     puts error_msg
-    write_in_hash arr_json
+    write_in_hash
     executePushes "failed", error_msg
     exit
   end
@@ -112,10 +119,10 @@ elsif arr_distri["distribution_name"] == 'HockeyApp'
   release_note = arr_json["distribution_list"]
 
   #Distribution
-  distributeToHockeyApp(hockeyapp_token, app_id, release_note)
+  distributeToHockeyApp(hockeyapp_token, app_id)
 
 else
   warn 'distribution site wasnt specified !'
-  write_in_hash arr_json
+  write_in_hash
   exit
 end
