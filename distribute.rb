@@ -10,7 +10,7 @@ require 'unirest'
 def distributeToTestFlight(api_token, team_token, distribution_list)
 
 
-  url = 'http://testflightapp.com/api/builds.json'
+  url = "http://testflightapp.com/api/builds.json"
   dir_ipa = Dir["/Users/wasappliserver/.jenkins/jobs/#{@project_dir}/builds/*.ipa"]
   dir_dsym = Dir["/Users/wasappliserver/.jenkins/jobs/#{@project_dir}/builds/*-dSYM.zip"]
   puts "sending the request to TestFlight"
@@ -102,7 +102,7 @@ def executePushes build_status, error_msg
   api_key = user_push_co["api_key"]
   api_secret = user_push_co["api_secret"]
   message = @release_note
-  if (!api_key.equal?("") || !api_secret.equal?(""))
+  if (api_key != ("") && api_secret != (""))
     sendPushCo api_key, api_secret, message
   end
   ### end Push.co ###
@@ -113,20 +113,20 @@ end
 # Push notifications for BoxCar
 #
 def sendPushCar (user_credentials, title, long_message)
-  url= 'https://new.boxcar.io/api/notifications'
+  url= "https://new.boxcar.io/api/notifications"
 
   #MARDOWN COVERT
   # filename to be converted to HTML
   filename = "/Users/wasappliserver/.jenkins/jobs/#{@project_dir}/workspace/Release/#{@project_dir}.md"
   # Read file contents
-  @contents = File.read(filename)
+  contents = File.read(filename)
 
   RestClient.post url,
                   {
                       :user_credentials => user_credentials,
                       :notification => {
                           :title => title,
-                          :long_message => @contents,
+                          :long_message => contents.to_s,
                           :sound => "success",
                       }
                   }
