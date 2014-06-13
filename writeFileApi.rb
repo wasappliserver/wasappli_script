@@ -2,7 +2,7 @@ require 'rest_client'
 require 'json'
 require 'find'
 
-response_const = RestClient.get "http://10.0.1.10:3000/api/v1/jenkins?name=iAddic7"
+response_const = RestClient.get "http://mobservic.es/api/v1/jenkins?name=iAddic7"
 if (response_const != nil)
 
   File.open("/Users/wasappliserver/.jenkins/jobs/#{ARGV[0]}/workspace/#{ARGV[0]}/Constants.h", 'w') do |file|
@@ -11,7 +11,7 @@ if (response_const != nil)
 
 end
 
-response_loc = RestClient.get "http://10.0.1.10:3000/api/v1/localizables?name=iAddic7"
+response_loc = RestClient.get "http://mobservic.es/api/v1/localizables?name=iAddic7"
 arr_json = JSON.parse(response_loc.to_s)
 
 if (response_loc != nil)
@@ -34,15 +34,15 @@ if (response_loc != nil)
     el = lang_tab[i][/(\w+).lproj$/]
     el2 = el[/^(\w+)/]
     lang = el2
-    puts "LANG IS ===>" + lang.to_s
+    #puts "LANG IS ===>" + lang.to_s
     data = String.new
 
     File.open("/Users/wasappliserver/.jenkins/jobs/#{ARGV[0]}/workspace/#{ARGV[0]}/#{lang}.lproj/Localizable.strings", 'w') do |file|
 
       arr_json.each do |val|
         if (val["lang"] == lang)
-          puts "lang is #{lang} and val lang is #{val["lang"]}"
-          data << "\"#{val["key_loc"]}\" = \"#{val["value"]}\"\n"
+          #puts "lang is #{lang} and val lang is #{val["lang"]}"
+          data << "\"#{val["key_loc"]}\" = \"#{val["value"]}\";\n"
         end
       end
 
